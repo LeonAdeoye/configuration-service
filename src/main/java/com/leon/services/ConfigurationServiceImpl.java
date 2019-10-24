@@ -9,15 +9,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class ConfigurationServiceImpl implements ConfigurationService
 {
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
-    private static Map<String, Map<String,List<Configuration>>> configurations;
+    private static Map<String, Map<String,Configuration>> configurations;
 
     @Autowired
     ConfigurationRepository configurationRepository;
@@ -36,10 +35,10 @@ public class ConfigurationServiceImpl implements ConfigurationService
     @Override
     public String getConfigurationValue(String owner, String key)
     {
-        if(!configurations.containsKey(key) || !configurations.get(key).containsKey(owner) || configurations.get(key).get(owner).size() == 0)
+        if(!configurations.containsKey(key) || !configurations.get(key).containsKey(owner))
             return "";
 
-        return this.configurations.get(key).get(owner).get(0).getValue();
+        return this.configurations.get(key).get(owner).getValue();
     }
 
     @Override
@@ -47,14 +46,29 @@ public class ConfigurationServiceImpl implements ConfigurationService
     {
         logger.info("Saving configuration: ", configuration);
         configurationRepository.save(configuration);
-        //TODO add to map cache
+        addToCache(configuration);
+    }
+
+    private void addToCache(Configuration configuration)
+    {
+        if(configurations.containsKey(configuration.getKey()))
+        {
+            Map<String, Configuration> keyMap = configurations.get(configuration.getKey());
+            keyMap.put(configuration.getOwner(), configuration);
+        }
+        else
+        {
+            Map<String, Configuration> ownerMap = new HashMap<>();
+            ownerMap.put(configuration.getOwner(), configuration);
+            configurations.put(configuration.getKey(), ownerMap);
+        }
     }
 
     private void loadAllConfigurations()
     {
         List<Configuration> loadedConfigurations = configurationRepository.findAll();
-        configurations = loadedConfigurations.stream().collect(Collectors.groupingBy(Configuration::getKey, Collectors.groupingBy(Configuration::getOwner)));
-        logger.info("Retrieved configurations: " + configurations);
+        configurations = loadedConfigurations.stream().collect(Collectors.groupingBy(Configuration::getKey, Collectors.toMap(x -> x.getOwner(), x -> x)));
+        logger.info("Retrieved configurations from persistence store: " + configurations);
     }
 
     @Override
