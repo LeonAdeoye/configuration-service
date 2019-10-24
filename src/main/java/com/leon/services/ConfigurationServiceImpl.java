@@ -25,13 +25,12 @@ public class ConfigurationServiceImpl implements ConfigurationService
 
     public ConfigurationServiceImpl()
     {
-        loadAllConfigurations();
     }
 
     @PostConstruct
     public void initialize()
     {
-        List<Configuration> configurations = configurationRepository.findAll();
+        loadAllConfigurations();
     }
 
     @Override
@@ -51,10 +50,10 @@ public class ConfigurationServiceImpl implements ConfigurationService
         configurationRepository.save(configuration);
     }
 
-    @Override
-    public void loadAllConfigurations()
+    private void loadAllConfigurations()
     {
-        //List<Configuration> configurations = configurationRepository.findAll();
+        List<Configuration> loadedConfigurations = configurationRepository.findAll();
+        configurations = loadedConfigurations.stream().collect(Collectors.groupingBy(Configuration::getKey, Collectors.groupingBy(Configuration::getOwner)));
         logger.info("Retrieved configurations: " + configurations);
     }
 
@@ -63,5 +62,12 @@ public class ConfigurationServiceImpl implements ConfigurationService
     {
         logger.info("Reconfiguring...");
         this.loadAllConfigurations();
+    }
+
+    @Override
+    public List<Configuration> getAllConfigurations()
+    {
+        // TODO
+        return null;
     }
 }
