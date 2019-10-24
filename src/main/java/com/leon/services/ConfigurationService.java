@@ -6,7 +6,7 @@ import java.util.List;
 public interface ConfigurationService
 {
     String getConfigurationValue(String owner, String key);
-    void saveConfiguration(String owner, String key, String value);
+    void saveConfiguration(Configuration configuration);
     void reconfigure();
     List<Configuration> getAllConfigurations();
 }

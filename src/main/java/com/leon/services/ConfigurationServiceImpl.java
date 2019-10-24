@@ -43,11 +43,11 @@ public class ConfigurationServiceImpl implements ConfigurationService
     }
 
     @Override
-    public void saveConfiguration(String owner, String key, String value)
+    public void saveConfiguration(Configuration configuration)
     {
-        Configuration configuration = new Configuration(owner, key, value);
         logger.info("Saving configuration: ", configuration);
         configurationRepository.save(configuration);
+        //TODO add to map cache
     }
 
     private void loadAllConfigurations()
