@@ -36,9 +36,27 @@ public class ConfigurationServiceImpl implements ConfigurationService
     public String getConfigurationValue(String owner, String key)
     {
         if(!configurations.containsKey(key) || !configurations.get(key).containsKey(owner))
+        {
+            logger.info("Could not find the configuration with owner: " + owner + ", and key: " + key + " in the cache.");
             return "";
+        }
 
-        return this.configurations.get(key).get(owner).getValue();
+        return configurations.get(key).get(owner).getValue();
+    }
+
+    @Override
+    public void deleteConfiguration(String owner, String key)
+    {
+        if(!configurations.containsKey(key) || !configurations.get(key).containsKey(owner))
+        {
+            logger.info("Could not delete the configuration with owner: " + owner + ", and key: " + key + ".");
+        }
+
+        Configuration configurationToDelete = configurations.get(key).get(owner);
+        configurationRepository.deleteById(configurationToDelete.getId());
+        configurations.get(key).remove(configurationToDelete);
+        if(configurations.get(key).values().size() == 0)
+            configurations.remove(key);
     }
 
     @Override

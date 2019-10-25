@@ -12,8 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 public class MainController
@@ -49,4 +48,13 @@ public class MainController
         logger.info("Received request to save a configuration: " + configuration);
         configurationService.saveConfiguration(configuration);
     }
+
+    @RequestMapping(value = "/configuration", method=DELETE)
+    public void deleteConfiguration(@RequestParam String owner, @RequestParam String key)
+    {
+        logger.info("Received request to delete configuration value with owner: " + owner + ", and key: " + key);
+        configurationService.deleteConfiguration(owner, key);
+    }
+
+
 }
