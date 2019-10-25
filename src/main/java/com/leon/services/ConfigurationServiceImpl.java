@@ -21,7 +21,6 @@ public class ConfigurationServiceImpl implements ConfigurationService
     @Autowired
     ConfigurationRepository configurationRepository;
 
-
     public ConfigurationServiceImpl()
     {
     }
@@ -53,18 +52,22 @@ public class ConfigurationServiceImpl implements ConfigurationService
         }
 
         Configuration configurationToDelete = configurations.get(key).get(owner);
+        logger.info("Deleting configuration: " + configurationToDelete);
         configurationRepository.deleteById(configurationToDelete.getId());
         configurations.get(key).remove(configurationToDelete);
         if(configurations.get(key).values().size() == 0)
             configurations.remove(key);
+
+        logger.info("Deleted configuration: " + configurationToDelete);
     }
 
     @Override
     public void saveConfiguration(Configuration configuration)
     {
-        logger.info("Saving configuration: ", configuration);
         configurationRepository.save(configuration);
         addToCache(configuration);
+
+        logger.info("Saved configuration: " + configuration);
     }
 
     private void addToCache(Configuration configuration)
@@ -92,7 +95,6 @@ public class ConfigurationServiceImpl implements ConfigurationService
     @Override
     public void reconfigure()
     {
-        logger.info("Reconfiguring...");
         this.loadAllConfigurations();
     }
 
