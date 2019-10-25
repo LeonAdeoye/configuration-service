@@ -12,6 +12,8 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 public class ConfigurationServiceImpl implements ConfigurationService
 {
@@ -101,7 +103,12 @@ public class ConfigurationServiceImpl implements ConfigurationService
     @Override
     public List<Configuration> getAllConfigurations()
     {
-        // TODO
-        return null;
+        List<Configuration> list = configurations.entrySet().stream()
+                .flatMap(key -> key.getValue().entrySet().stream())
+                .map(owner -> owner.getValue()).collect(toList());
+
+        logger.info("Returned " + list.size() + " configurations.");
+
+        return list;
     }
 }

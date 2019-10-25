@@ -50,7 +50,7 @@ public class MainController
     @RequestMapping(value = "/configurations", method=GET)
     public List<Configuration> getConfigurations()
     {
-        logger.info("Received request for all configuration values");
+        logger.info("Received request for all configuration values.");
         return configurationService.getAllConfigurations();
     }
 
@@ -59,7 +59,7 @@ public class MainController
     {
         if(configuration == null)
         {
-            logger.error("The configuration request body cannot be null");
+            logger.error("The configuration request body cannot be null.");
             throw new NullPointerException("configuration");
         }
 
@@ -85,6 +85,4 @@ public class MainController
         logger.info("Received request to delete configuration value with owner: " + owner + ", and key: " + key);
         configurationService.deleteConfiguration(owner, key);
     }
-
-
 }
