@@ -91,6 +91,7 @@ public class ConfigurationServiceImpl implements ConfigurationService
     {
         List<Configuration> loadedConfigurations = configurationRepository.findAll();
         configurations = loadedConfigurations.stream().collect(Collectors.groupingBy(Configuration::getKey, Collectors.toMap(x -> x.getOwner(), x -> x)));
+
         logger.info("Retrieved configurations from persistence store: " + configurations);
     }
 
@@ -107,7 +108,7 @@ public class ConfigurationServiceImpl implements ConfigurationService
                 .flatMap(key -> key.getValue().entrySet().stream())
                 .map(owner -> owner.getValue()).collect(toList());
 
-        logger.info("Returned " + list.size() + " configurations.");
+        logger.info("Returning " + list.size() + " configurations.");
 
         return list;
     }
