@@ -51,6 +51,7 @@ public class ConfigurationServiceImpl implements ConfigurationService
         if(!configurations.containsKey(key) || !configurations.get(key).containsKey(owner))
         {
             logger.info("Could not delete the configuration with owner: " + owner + ", and key: " + key + ".");
+            return;
         }
 
         Configuration configurationToDelete = configurations.get(key).get(owner);

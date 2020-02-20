@@ -2,7 +2,6 @@ package com.leon.services;
 
 import com.leon.models.Configuration;
 import com.leon.repositories.ConfigurationRepository;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -12,10 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import org.mockito.*;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,25 +29,13 @@ public class ConfigurationServiceTest
     private ConfigurationService configurationService;
 
     @Test
-    public void whenPassedNonExistentConfiguration_getConfigurationValue_shouldReturnEmptyString()
-    {
-        // Arrange
-        //ConfigurationService configurationServiceMock = Mockito.mock(ConfigurationService.class);
-        //when(configurationServiceMock.getConfigurationValue())
-        // Act
-        //String result = configurationServiceMock.getConfigurationValue("horatio", "surname");
-        //Assert
-        //assertEquals("should return empty string", "", result);
-    }
-
-    @Test
     public void whenPassedValidConfiguration_saveConfiguration_shouldCallSaveMethodInRepositoryMock()
     {
         // Arrange
         Configuration configuration = new Configuration("Horatio", "surname", "Adeoye");
         // Act
         configurationService.saveConfiguration(configuration);
-        //Assert
+        // Assert
         verify(configurationRepositoryMock, times(1)).save(configuration);
     }
 
@@ -72,13 +55,58 @@ public class ConfigurationServiceTest
         List<Configuration> configs = Arrays.asList(
                 new Configuration("Horatio", "surname", "Adeoye"),
                 new Configuration("Harper", "surname", "Adeoye"));
-
         when(configurationRepositoryMock.findAll()).thenReturn(configs);
         configurationService.reconfigure();
-
-        //Act
+        // Act
         List<Configuration> result = configurationService.getAllConfigurations();
+        // Assert
+        assertEquals("list sizes should match", configs.size(), result.size());
+    }
 
-        assertEquals(configs.size(), result.size());
+    @Test
+    public void whenConfigurationExists_getConfigurationValue_shouldReturnValidValue()
+    {
+        // Arrange
+        List<Configuration> configs = Arrays.asList(
+                new Configuration("Horatio", "surname", "Adeoye"),
+                new Configuration("Horatio", "firstName", "Ethan"));
+        when(configurationRepositoryMock.findAll()).thenReturn(configs);
+        configurationService.reconfigure();
+        // Act
+        String surname = configurationService.getConfigurationValue("Horatio", "surname");
+        String firstName = configurationService.getConfigurationValue("Horatio", "firstName");
+        // Assert
+        assertEquals("surname config should be returned", "Adeoye", surname);
+        assertEquals("first name config should be returned", "Ethan", firstName);
+    }
+
+    @Test
+    public void whenConfigurationDoesNotExist_getConfigurationValue_shouldReturnEmptyStringValue()
+    {
+        // Arrange
+        List<Configuration> configs = Arrays.asList(
+                new Configuration("Horatio", "surname", "Adeoye"),
+                new Configuration("Horatio", "firstName", "Ethan"));
+        when(configurationRepositoryMock.findAll()).thenReturn(configs);
+        configurationService.reconfigure();
+        // Act
+        String age = configurationService.getConfigurationValue("Horatio", "age");
+        // Assert
+        assertEquals("empty string should be returned for non-existent configuration", "", age);
+    }
+
+    @Test
+    public void whenConfigurationDoesNotExist_deleteConfiguration_shouldNotCallRepositoryMethod()
+    {
+        // Arrange
+        List<Configuration> configs = Arrays.asList(
+                new Configuration("Horatio", "surname", "Adeoye"),
+                new Configuration("Horatio", "firstName", "Ethan"));
+        when(configurationRepositoryMock.findAll()).thenReturn(configs);
+        configurationService.reconfigure();
+        // Act
+        configurationService.deleteConfiguration("Horatio", "age");
+        // Assert
+        verify(configurationRepositoryMock, never()).deleteById("");
     }
 }
