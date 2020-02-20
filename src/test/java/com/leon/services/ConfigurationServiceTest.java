@@ -96,7 +96,7 @@ public class ConfigurationServiceTest
     }
 
     @Test
-    public void whenConfigurationDoesNotExist_deleteConfiguration_shouldNotCallRepositoryMethod()
+    public void whenConfigurationDoesNotExist_deleteConfiguration_shouldNotCallRepositoryDeleteMethod()
     {
         // Arrange
         List<Configuration> configs = Arrays.asList(
@@ -107,6 +107,21 @@ public class ConfigurationServiceTest
         // Act
         configurationService.deleteConfiguration("Horatio", "age");
         // Assert
-        verify(configurationRepositoryMock, never()).deleteById("");
+        verify(configurationRepositoryMock, never()).deleteById(null);
+    }
+
+    @Test
+    public void whenConfigurationExists_deleteConfiguration_shouldCallRepositoryDeleteMethod()
+    {
+        // Arrange
+        List<Configuration> configs = Arrays.asList(
+                new Configuration("Horatio", "surname", "Adeoye"),
+                new Configuration("Horatio", "firstName", "Ethan"));
+        when(configurationRepositoryMock.findAll()).thenReturn(configs);
+        configurationService.reconfigure();
+        // Act
+        configurationService.deleteConfiguration("Horatio", "surname");
+        // Assert
+        verify(configurationRepositoryMock, times(1)).deleteById(null);
     }
 }
