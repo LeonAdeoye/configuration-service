@@ -18,7 +18,6 @@ public class Configuration
 
     public Configuration()
     {
-        this.id = "";
         this.key = "";
         this.value = "";
         this.owner = "";
@@ -26,7 +25,6 @@ public class Configuration
 
     public Configuration(String owner, String key, String value)
     {
-        this.id = "";
         this.key = key;
         this.value = value;
         this.owner = owner;

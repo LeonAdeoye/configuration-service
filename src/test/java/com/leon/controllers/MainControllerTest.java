@@ -129,7 +129,7 @@ public class MainControllerTest
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         // Assert
-        verify(configurationServiceMock, times(1)).saveConfiguration(configuration);
+        verify(configurationServiceMock, times(1)).saveConfiguration(any(Configuration.class));
     }
 
     @Test()
