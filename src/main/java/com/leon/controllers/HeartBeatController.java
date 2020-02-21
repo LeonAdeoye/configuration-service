@@ -13,8 +13,8 @@ public class HeartBeatController
     @RequestMapping("/heartbeat")
     public String heartBeat()
     {
-        logger.debug("Received heartbeat request and will respond.");
+        logger.debug("Received heartbeat request.");
 
-        return "I am still here!";
+        return "Yo! I am still here!";
     }
 }
