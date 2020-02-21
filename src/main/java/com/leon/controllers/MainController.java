@@ -70,16 +70,16 @@ public class MainController
     @RequestMapping(value = "/configuration", method=DELETE)
     public void deleteConfiguration(@RequestParam String owner, @RequestParam String key)
     {
-        if(owner == null)
+        if(owner == null || owner.isEmpty())
         {
-            logger.error("The owner request param cannot be null.");
-            throw new NullPointerException("owner");
+            logger.error("The owner request param cannot be null or empty.");
+            throw new IllegalArgumentException("owner argument is invalid");
         }
 
-        if(key == null)
+        if(key == null || key.isEmpty())
         {
-            logger.error("The key request param cannot be null.");
-            throw new NullPointerException("key");
+            logger.error("The key request param cannot be invalid");
+            throw new IllegalArgumentException("key argument is invalid");
         }
 
         logger.info("Received request to delete configuration value with owner: " + owner + ", and key: " + key);

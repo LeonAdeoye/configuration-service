@@ -16,8 +16,17 @@ public class Configuration
     private String value;
     private String owner;
 
+    public Configuration()
+    {
+        this.id = "";
+        this.key = "";
+        this.value = "";
+        this.owner = "";
+    }
+
     public Configuration(String owner, String key, String value)
     {
+        this.id = "";
         this.key = key;
         this.value = value;
         this.owner = owner;
@@ -66,12 +75,10 @@ public class Configuration
     @Override
     public String toString()
     {
-        return "Configuration{" +
-                "Id='" + id + '\'' +
-                "key='" + key + '\'' +
-                ", value='" + value + '\'' +
-                ", owner='" + owner + '\'' +
-                '}';
+        return "Configuration { \"Id\": \"" + id + "\"" +
+                ", \"key\": \"" + key + "\"" +
+                ", \"value\": \"" + value + "\"" +
+                ", \"owner\": \"" + owner + "\" }";
     }
 
     @Override

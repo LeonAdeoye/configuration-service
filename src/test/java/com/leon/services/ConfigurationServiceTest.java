@@ -107,7 +107,7 @@ public class ConfigurationServiceTest
         // Act
         configurationService.deleteConfiguration("Horatio", "age");
         // Assert
-        verify(configurationRepositoryMock, never()).deleteById(null);
+        verify(configurationRepositoryMock, never()).deleteById("");
     }
 
     @Test
@@ -122,6 +122,6 @@ public class ConfigurationServiceTest
         // Act
         configurationService.deleteConfiguration("Horatio", "surname");
         // Assert
-        verify(configurationRepositoryMock, times(1)).deleteById(null);
+        verify(configurationRepositoryMock, times(1)).deleteById("");
     }
 }
