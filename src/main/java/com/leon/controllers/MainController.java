@@ -3,10 +3,7 @@ package com.leon.controllers;
 import com.leon.models.Configuration;
 import com.leon.services.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +18,7 @@ public class MainController
     @Autowired
     private ConfigurationService configurationService;
 
+    @CrossOrigin
     @RequestMapping("/reconfigure")
     public void reconfigure()
     {
@@ -28,6 +26,7 @@ public class MainController
         configurationService.reconfigure();
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/configuration", method=GET)
     public String getConfiguration(@RequestParam String owner, @RequestParam String key) throws IllegalArgumentException
     {
@@ -47,6 +46,7 @@ public class MainController
         return configurationService.getConfigurationValue(owner, key);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/configurations", method=GET)
     public List<Configuration> getAllConfigurations()
     {
@@ -54,6 +54,7 @@ public class MainController
         return configurationService.getAllConfigurations();
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/configuration", method=POST)
     public void saveConfiguration(@RequestBody Configuration configuration)
     {
@@ -67,6 +68,7 @@ public class MainController
         configurationService.saveConfiguration(configuration);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/configuration", method=DELETE)
     public void deleteConfiguration(@RequestParam String owner, @RequestParam String key)
     {
