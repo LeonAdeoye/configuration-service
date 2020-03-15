@@ -105,7 +105,7 @@ public class ConfigurationServiceTest
         when(configurationRepositoryMock.findAll()).thenReturn(configs);
         configurationService.reconfigure();
         // Act
-        configurationService.deleteConfiguration("Horatio", "age");
+        configurationService.deleteConfiguration("");
         // Assert
         verify(configurationRepositoryMock, never()).deleteById(any());
     }
@@ -120,7 +120,7 @@ public class ConfigurationServiceTest
         when(configurationRepositoryMock.findAll()).thenReturn(configs);
         configurationService.reconfigure();
         // Act
-        configurationService.deleteConfiguration("Horatio", "surname");
+        configurationService.deleteConfiguration("Horatio");
         // Assert
         verify(configurationRepositoryMock, times(1)).deleteById(any());
     }

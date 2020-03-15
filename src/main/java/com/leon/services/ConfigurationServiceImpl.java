@@ -45,21 +45,25 @@ public class ConfigurationServiceImpl implements ConfigurationService
         return configurations.get(key).get(owner).getValue();
     }
 
-    @Override
-    public void deleteConfiguration(String owner, String key)
+    private Configuration getConfigurationValue(String id)
     {
-        if(!configurations.containsKey(key) || !configurations.get(key).containsKey(owner))
-        {
-            logger.info("Could not delete the configuration with owner: " + owner + ", and key: " + key + ".");
-            return;
-        }
+        return configurations.entrySet().stream()
+                .flatMap(key -> key.getValue().entrySet().stream())
+                .map(owner -> owner.getValue())
+                .filter((configuration) -> configuration.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
 
-        Configuration configurationToDelete = configurations.get(key).get(owner);
+    @Override
+    public void deleteConfiguration(String id)
+    {
+        Configuration configurationToDelete = getConfigurationValue(id);
         logger.info("Deleting configuration: " + configurationToDelete);
-        configurationRepository.deleteById(configurationToDelete.getId());
-        configurations.get(key).remove(configurationToDelete);
-        if(configurations.get(key).values().size() == 0)
-            configurations.remove(key);
+        configurationRepository.deleteById(id);
+        configurations.get(configurationToDelete.getKey()).remove(configurationToDelete);
+        if(configurations.get(configurationToDelete.getKey()).values().size() == 0)
+            configurations.remove(configurationToDelete.getKey());
 
         logger.info("Deleted configuration: " + configurationToDelete);
     }
@@ -92,8 +96,8 @@ public class ConfigurationServiceImpl implements ConfigurationService
     {
         List<Configuration> loadedConfigurations = configurationRepository.findAll();
         configurations = loadedConfigurations.stream().collect(Collectors.groupingBy(Configuration::getKey, Collectors.toMap(x -> x.getOwner(), x -> x)));
-
-        logger.info("Retrieved configurations from persistence store: " + configurations);
+        logger.info("Retrieved " + loadedConfigurations.size() + " configurations from the persistence store:\n"
+                + loadedConfigurations.stream().map(config -> config + "\n").collect(Collectors.joining()));
     }
 
     @Override

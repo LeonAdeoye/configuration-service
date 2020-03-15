@@ -3,6 +3,7 @@ package com.leon.controllers;
 import com.leon.models.Configuration;
 import com.leon.services.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,7 @@ public class MainController
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/configurations", method=GET)
+    @RequestMapping(value = "/configurations", produces=MediaType.APPLICATION_JSON_UTF8_VALUE, method=GET)
     public List<Configuration> getAllConfigurations()
     {
         logger.info("Received request for all configuration values.");
@@ -69,22 +70,30 @@ public class MainController
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/configuration", method=DELETE)
-    public void deleteConfiguration(@RequestParam String owner, @RequestParam String key)
+    @RequestMapping(value = "/configuration", method=PUT)
+    public void updateConfiguration(@RequestBody Configuration configuration)
     {
-        if(owner == null || owner.isEmpty())
+        if(configuration == null)
         {
-            logger.error("The owner request param cannot be null or empty.");
-            throw new IllegalArgumentException("owner argument is invalid");
+            logger.error("The configuration request body cannot be null.");
+            throw new NullPointerException("configuration");
         }
 
-        if(key == null || key.isEmpty())
+        logger.info("Received request to update a configuration: " + configuration);
+        configurationService.saveConfiguration(configuration);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/configuration", method=DELETE)
+    public void deleteConfiguration(@RequestParam String id)
+    {
+        if(id == null || id.isEmpty())
         {
-            logger.error("The key request param cannot be invalid");
-            throw new IllegalArgumentException("key argument is invalid");
+            logger.error("The id request param cannot be null or empty.");
+            throw new IllegalArgumentException("id argument is invalid");
         }
 
-        logger.info("Received request to delete configuration value with owner: " + owner + ", and key: " + key);
-        configurationService.deleteConfiguration(owner, key);
+        logger.info("Received request to delete configuration value with id: " + id);
+        configurationService.deleteConfiguration(id);
     }
 }

@@ -149,48 +149,25 @@ public class MainControllerTest
     {
         // Act
         mockMVC.perform(delete("/configuration")
-                .param("owner", "horatio")
-                .param("key", "surname"))
+                .param("id", "horatio"))
                 .andExpect(status().isOk());
         // Assert
-        verify(configurationServiceMock, times(1)).deleteConfiguration("horatio", "surname");
+        verify(configurationServiceMock, times(1)).deleteConfiguration("horatio");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void configurationDeleteRequestWhenPassedInvalidOwnerParam_ShouldThrowIllegalArgumentException() throws Throwable
+    public void configurationDeleteRequestWhenPassedInvalidIdParam_ShouldThrowIllegalArgumentException() throws Throwable
     {
         try
         {
             // Act
             mockMVC.perform(delete("/configuration")
-                    .param("owner", "")
-                    .param("key", "surname"));
+                    .param("id", ""));
         }
         catch(NestedServletException e)
         {
             // Assert
-            verify(configurationServiceMock, never()).deleteConfiguration("", "surname");
-            assertNotNull( e );
-            assertNotNull( e.getCause() );
-            assertTrue( e.getCause() instanceof IllegalArgumentException );
-            throw e.getCause();
-        }
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void configurationDeleteRequestWhenPassedInvalidKeyParam_ShouldThrowIllegalArgumentException() throws Throwable
-    {
-        try
-        {
-            // Act
-            mockMVC.perform(delete("/configuration")
-                    .param("owner", "horatio")
-                    .param("key", ""));
-        }
-        catch(NestedServletException e)
-        {
-            // Assert
-            verify(configurationServiceMock, never()).deleteConfiguration("horatio", "");
+            verify(configurationServiceMock, never()).deleteConfiguration("");
             assertNotNull( e );
             assertNotNull( e.getCause() );
             assertTrue( e.getCause() instanceof IllegalArgumentException );
