@@ -15,26 +15,34 @@ public class Configuration
     private String key;
     private String value;
     private String owner;
+    private String lastUpdatedBy;
+    private String lastUpdatedOn;
 
     public Configuration()
     {
         this.key = "";
         this.value = "";
         this.owner = "";
+        this.lastUpdatedBy = "";
+        this.lastUpdatedOn = "";
     }
 
-    public Configuration(String owner, String key, String value)
+    public Configuration(String owner, String key, String value, String lastUpdatedBy, String lastUpdatedOn)
     {
         this.key = key;
         this.value = value;
         this.owner = owner;
+        this.lastUpdatedBy = lastUpdatedBy;
+        this.lastUpdatedOn = lastUpdatedOn;
     }
 
-    public Configuration(String owner, String key, String value, String id)
+    public Configuration(String owner, String key, String value, String lastUpdatedBy, String lastUpdatedOn, String id)
     {
         this.key = key;
         this.value = value;
         this.owner = owner;
+        this.lastUpdatedBy = lastUpdatedBy;
+        this.lastUpdatedOn = lastUpdatedOn;
         this.id = id;
     }
 
@@ -78,10 +86,32 @@ public class Configuration
         this.owner = owner;
     }
 
+    public String getLastUpdatedBy()
+    {
+        return this.lastUpdatedBy;
+    }
+
+    public void setLastUpdatedBy(String lastUpdatedBy)
+    {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public String getLastUpdatedOn()
+    {
+        return this.lastUpdatedOn;
+    }
+
+    public void setLastUpdatedOn(String lastUpdatedOn)
+    {
+        this.lastUpdatedOn = lastUpdatedOn;
+    }
+
     @Override
     public String toString()
     {
         return "Configuration { \"Id\": \"" + id + "\"" +
+                ", \"last updated by\": \"" + lastUpdatedBy + "\"" +
+                ", \"last updated on\": \"" + lastUpdatedOn + "\"" +
                 ", \"key\": \"" + key + "\"" +
                 ", \"value\": \"" + value + "\"" +
                 ", \"owner\": \"" + owner + "\" }";
@@ -95,6 +125,8 @@ public class Configuration
         Configuration that = (Configuration) o;
         return getKey().equals(that.getKey()) &&
                 getValue().equals(that.getValue()) &&
+                getLastUpdatedOn().equals(that.getLastUpdatedOn()) &&
+                getLastUpdatedBy().equals(that.getLastUpdatedBy()) &&
                 getId().equals(that.getId()) &&
                 getOwner().equals(that.getOwner());
     }
@@ -102,6 +134,6 @@ public class Configuration
     @Override
     public int hashCode()
     {
-        return Objects.hash(getId(), getKey(), getValue(), getOwner());
+        return Objects.hash(getId(), getKey(), getValue(), getOwner(), getLastUpdatedBy(), getLastUpdatedOn());
     }
 }

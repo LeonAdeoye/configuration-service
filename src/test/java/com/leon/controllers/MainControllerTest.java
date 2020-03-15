@@ -121,7 +121,7 @@ public class MainControllerTest
     public void configurationPostRequestWhenPassedValidRequestBody_ShouldCallConfigurationServiceSaveConfigurationMethod() throws Exception
     {
         // Arrange
-        Configuration configuration = new Configuration("Horatio", "surname", "Adeoye");
+        Configuration configuration = new Configuration("Horatio", "surname", "Adeoye", "papa", "today");
         // Act
         mockMVC.perform(post("/configuration")
                 .content(asJsonString(configuration))

@@ -10,16 +10,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.util.NestedServletException;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -36,7 +33,7 @@ public class ConfigurationServiceTest
     public void whenPassedValidConfiguration_saveConfiguration_shouldCallSaveMethodInRepositoryMock()
     {
         // Arrange
-        Configuration configuration = new Configuration("Horatio", "surname", "Adeoye");
+        Configuration configuration = new Configuration("Horatio", "surname", "Adeoye","papa", "today");
         // Act
         configurationService.saveConfiguration(configuration);
         // Assert
@@ -57,8 +54,8 @@ public class ConfigurationServiceTest
     {
         // Arrange
         List<Configuration> configs = Arrays.asList(
-                new Configuration("Horatio", "surname", "Adeoye"),
-                new Configuration("Harper", "surname", "Adeoye"));
+                new Configuration("Horatio", "surname", "Adeoye", "papa", "today"),
+                new Configuration("Harper", "surname", "Adeoye", "papa", "today"));
         when(configurationRepositoryMock.findAll()).thenReturn(configs);
         configurationService.reconfigure();
         // Act
@@ -72,8 +69,8 @@ public class ConfigurationServiceTest
     {
         // Arrange
         List<Configuration> configs = Arrays.asList(
-                new Configuration("Horatio", "surname", "Adeoye"),
-                new Configuration("Horatio", "firstName", "Ethan"));
+                new Configuration("Horatio", "surname", "Adeoye", "papa", "today"),
+                new Configuration("Horatio", "firstName", "Ethan", "papa", "today"));
         when(configurationRepositoryMock.findAll()).thenReturn(configs);
         configurationService.reconfigure();
         // Act
@@ -89,8 +86,8 @@ public class ConfigurationServiceTest
     {
         // Arrange
         List<Configuration> configs = Arrays.asList(
-                new Configuration("Horatio", "surname", "Adeoye"),
-                new Configuration("Horatio", "firstName", "Ethan"));
+                new Configuration("Horatio", "surname", "Adeoye", "papa", "today"),
+                new Configuration("Horatio", "firstName", "Ethan", "papa", "today"));
         when(configurationRepositoryMock.findAll()).thenReturn(configs);
         configurationService.reconfigure();
         // Act
@@ -106,8 +103,8 @@ public class ConfigurationServiceTest
         {
             // Arrange
             List<Configuration> configs = Arrays.asList(
-                    new Configuration("Horatio", "surname", "Adeoye", "1"),
-                    new Configuration("Horatio", "firstName", "Ethan", "2"));
+                    new Configuration("Horatio", "surname", "Adeoye", "papa", "today", "1"),
+                    new Configuration("Horatio", "firstName", "Ethan", "papa", "today", "2"));
             when(configurationRepositoryMock.findAll()).thenReturn(configs);
             configurationService.reconfigure();
             // Act
@@ -126,8 +123,8 @@ public class ConfigurationServiceTest
     {
         // Arrange
         List<Configuration> configs = Arrays.asList(
-                new Configuration("Horatio", "surname", "Adeoye", "1"),
-                new Configuration("Horatio", "firstName", "Ethan", "2"));
+                new Configuration("Horatio", "surname", "Adeoye", "papa", "today", "1"),
+                new Configuration("Horatio", "firstName","Ethan", "papa", "today", "2"));
         when(configurationRepositoryMock.findAll()).thenReturn(configs);
         configurationService.reconfigure();
         // Act
