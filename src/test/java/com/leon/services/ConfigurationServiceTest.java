@@ -10,12 +10,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.util.NestedServletException;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -95,19 +99,26 @@ public class ConfigurationServiceTest
         assertEquals("empty string should be returned for non-existent configuration", "", age);
     }
 
-    @Test
-    public void whenConfigurationDoesNotExist_deleteConfiguration_shouldNotCallRepositoryDeleteMethod()
+    @Test(expected = IllegalArgumentException.class)
+    public void whenConfigurationDoesNotExist_deleteConfiguration_shouldNotCallRepositoryDeleteMethod() throws Exception
     {
-        // Arrange
-        List<Configuration> configs = Arrays.asList(
-                new Configuration("Horatio", "surname", "Adeoye"),
-                new Configuration("Horatio", "firstName", "Ethan"));
-        when(configurationRepositoryMock.findAll()).thenReturn(configs);
-        configurationService.reconfigure();
-        // Act
-        configurationService.deleteConfiguration("");
-        // Assert
-        verify(configurationRepositoryMock, never()).deleteById(any());
+        try
+        {
+            // Arrange
+            List<Configuration> configs = Arrays.asList(
+                    new Configuration("Horatio", "surname", "Adeoye", "1"),
+                    new Configuration("Horatio", "firstName", "Ethan", "2"));
+            when(configurationRepositoryMock.findAll()).thenReturn(configs);
+            configurationService.reconfigure();
+            // Act
+            configurationService.deleteConfiguration("");
+        }
+        catch(Exception e)
+        {
+            // Assert
+            verify(configurationRepositoryMock, never()).deleteById(any());
+            throw e;
+        }
     }
 
     @Test
@@ -115,12 +126,12 @@ public class ConfigurationServiceTest
     {
         // Arrange
         List<Configuration> configs = Arrays.asList(
-                new Configuration("Horatio", "surname", "Adeoye"),
-                new Configuration("Horatio", "firstName", "Ethan"));
+                new Configuration("Horatio", "surname", "Adeoye", "1"),
+                new Configuration("Horatio", "firstName", "Ethan", "2"));
         when(configurationRepositoryMock.findAll()).thenReturn(configs);
         configurationService.reconfigure();
         // Act
-        configurationService.deleteConfiguration("Horatio");
+        configurationService.deleteConfiguration("1");
         // Assert
         verify(configurationRepositoryMock, times(1)).deleteById(any());
     }

@@ -36,20 +36,20 @@ public class ConfigurationServiceImpl implements ConfigurationService
     @Override
     public String getConfigurationValue(String owner, String key)
     {
-        if(!configurations.containsKey(key) || !configurations.get(key).containsKey(owner))
+        if(!configurations.containsKey(owner) || !configurations.get(owner).containsKey(key))
         {
             logger.info("Could not find the configuration with owner: " + owner + ", and key: " + key + " in the cache.");
             return "";
         }
 
-        return configurations.get(key).get(owner).getValue();
+        return configurations.get(owner).get(key).getValue();
     }
 
     private Configuration getConfigurationValue(String id)
     {
         return configurations.entrySet().stream()
-                .flatMap(key -> key.getValue().entrySet().stream())
-                .map(owner -> owner.getValue())
+                .flatMap(owner -> owner.getValue().entrySet().stream())
+                .map(key -> key.getValue())
                 .filter((configuration) -> configuration.getId().equals(id))
                 .findFirst()
                 .orElse(null);
@@ -58,12 +58,16 @@ public class ConfigurationServiceImpl implements ConfigurationService
     @Override
     public void deleteConfiguration(String id)
     {
+        if(id == null || id.isEmpty())
+            throw new IllegalArgumentException("id argument is invalid");
+
         Configuration configurationToDelete = getConfigurationValue(id);
         logger.info("Deleting configuration: " + configurationToDelete);
         configurationRepository.deleteById(id);
-        configurations.get(configurationToDelete.getKey()).remove(configurationToDelete);
-        if(configurations.get(configurationToDelete.getKey()).values().size() == 0)
-            configurations.remove(configurationToDelete.getKey());
+
+        configurations.get(configurationToDelete.getOwner()).remove(configurationToDelete.getKey());
+        if(configurations.get(configurationToDelete.getOwner()).values().size() == 0)
+            configurations.remove(configurationToDelete.getOwner());
 
         logger.info("Deleted configuration: " + configurationToDelete);
     }
@@ -79,10 +83,10 @@ public class ConfigurationServiceImpl implements ConfigurationService
 
     private void addToCache(Configuration configuration)
     {
-        if(configurations.containsKey(configuration.getKey()))
+        if(configurations.containsKey(configuration.getOwner()))
         {
-            Map<String, Configuration> keyMap = configurations.get(configuration.getKey());
-            keyMap.put(configuration.getOwner(), configuration);
+            Map<String, Configuration> keyMap = configurations.get(configuration.getOwner());
+            keyMap.put(configuration.getKey(), configuration);
         }
         else
         {
@@ -95,7 +99,7 @@ public class ConfigurationServiceImpl implements ConfigurationService
     private void loadAllConfigurations()
     {
         List<Configuration> loadedConfigurations = configurationRepository.findAll();
-        configurations = loadedConfigurations.stream().collect(Collectors.groupingBy(Configuration::getKey, Collectors.toMap(x -> x.getOwner(), x -> x)));
+        configurations = loadedConfigurations.stream().collect(Collectors.groupingBy(Configuration::getOwner, Collectors.toMap(x -> x.getKey(), x -> x)));
         logger.info("Retrieved " + loadedConfigurations.size() + " configurations from the persistence store:\n"
                 + loadedConfigurations.stream().map(config -> config + "\n").collect(Collectors.joining()));
     }
@@ -110,8 +114,8 @@ public class ConfigurationServiceImpl implements ConfigurationService
     public List<Configuration> getAllConfigurations()
     {
         List<Configuration> list = configurations.entrySet().stream()
-                .flatMap(key -> key.getValue().entrySet().stream())
-                .map(owner -> owner.getValue()).collect(toList());
+                .flatMap(owner -> owner.getValue().entrySet().stream())
+                .map(key -> key.getValue()).collect(toList());
 
         logger.info("Returning " + list.size() + " configurations.");
 

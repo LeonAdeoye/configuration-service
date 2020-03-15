@@ -30,6 +30,14 @@ public class Configuration
         this.owner = owner;
     }
 
+    public Configuration(String owner, String key, String value, String id)
+    {
+        this.key = key;
+        this.value = value;
+        this.owner = owner;
+        this.id = id;
+    }
+
     public String getId()
     {
         return id;
