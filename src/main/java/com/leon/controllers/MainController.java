@@ -48,7 +48,7 @@ public class MainController
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/configurations", produces=MediaType.APPLICATION_JSON_UTF8_VALUE, method=GET)
+    @RequestMapping(value = "/configurations", produces=MediaType.APPLICATION_JSON_VALUE, method=GET)
     public List<Configuration> getAllConfigurations()
     {
         logger.info("Received request for all configuration values.");
@@ -56,7 +56,7 @@ public class MainController
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/configuration", method=POST)
+    @RequestMapping(value = "/configuration", method={PUT, POST}, consumes=MediaType.APPLICATION_JSON_VALUE)
     public void saveConfiguration(@RequestBody Configuration configuration)
     {
         if(configuration == null)
@@ -66,20 +66,6 @@ public class MainController
         }
 
         logger.info("Received request to save a configuration: " + configuration);
-        configurationService.saveConfiguration(configuration);
-    }
-
-    @CrossOrigin
-    @RequestMapping(value = "/configuration", method=PUT)
-    public void updateConfiguration(@RequestBody Configuration configuration)
-    {
-        if(configuration == null)
-        {
-            logger.error("The configuration request body cannot be null.");
-            throw new NullPointerException("configuration");
-        }
-
-        logger.info("Received request to update a configuration: " + configuration);
         configurationService.saveConfiguration(configuration);
     }
 
