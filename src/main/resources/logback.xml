@@ -1,0 +1,17 @@
+<configuration scan="true" scanPeriod="300 seconds" >
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>../logs/configuration-service.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>../logs/configuration-service.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <maxHistory>8</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <logger name="com.leon" level="INFO" />
+    <root level="DEBUG">
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>
