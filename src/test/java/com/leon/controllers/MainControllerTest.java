@@ -14,9 +14,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.util.NestedServletException;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -173,5 +178,71 @@ public class MainControllerTest
             assertTrue( e.getCause() instanceof IllegalArgumentException );
             throw e.getCause();
         }
+    }
+
+    @Test
+    public void configurationByOwnerGetRequestWhenPassedValidParams_ShouldCallConfigurationServiceGetConfigurationValueMethod() throws Exception
+    {
+        // Act
+        mockMVC.perform(get("/configurationByOwner")
+                .param("owner", "horatio"))
+                .andExpect(status().isOk());
+        // Assert
+        verify(configurationServiceMock, times(1)).getConfigurationValues("horatio");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void configurationByOwner_WhenPassedInvalidOwnerParam_ShouldThrowIllegalArgumentException() throws Throwable
+    {
+        try
+        {
+            // Act
+            mockMVC.perform(get("/configurationByOwner")
+                    .param("owner", ""));
+        }
+        catch(NestedServletException e)
+        {
+            // Assert
+            verify(configurationServiceMock, never()).getConfigurationValues("");
+            assertNotNull( e );
+            assertNotNull( e.getCause() );
+            assertTrue( e.getCause() instanceof IllegalArgumentException );
+            throw e.getCause();
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void configurationByOwner_WhenPassedNullOwnerParam_ShouldThrowIllegalArgumentException() throws Throwable
+    {
+        try
+        {
+            // Act
+            mockMVC.perform(get("/configurationByOwner")
+                    .param("owner", null));
+        }
+        catch(NestedServletException e)
+        {
+            // Assert
+            verify(configurationServiceMock, never()).getConfigurationValues(null);
+            assertNotNull( e );
+            assertNotNull( e.getCause() );
+            assertTrue( e.getCause() instanceof IllegalArgumentException );
+            throw e.getCause();
+        }
+    }
+
+    @Test
+    public void configurationByOwner_WhenPassedNonExistentOwnerParam_ShouldReturnEmptyList() throws Exception
+    {
+        // Arrange
+        when(configurationServiceMock.getConfigurationValues("horatio")).thenReturn(Collections.emptyList());
+        // Act
+        MvcResult result = mockMVC.perform(get("/configurationByOwner")
+                .param("owner", "horatio"))
+                .andExpect(status().isOk())
+                .andReturn();
+        // Assert
+        verify(configurationServiceMock, times(1)).getConfigurationValues("horatio");
+        assertEquals("[]", result.getResponse().getContentAsString());
     }
 }
