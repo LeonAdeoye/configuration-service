@@ -51,7 +51,7 @@ public class MainControllerTest
     }
 
     @Test
-    public void configurationGetRequestWhenPassedValidParams_ShouldCallConfigurationServiceGetConfigurationValueMethod() throws Exception
+    public void configurationGet_whenPassedValidParams_shouldCallConfigurationServiceGetConfigurationValueMethod() throws Exception
     {
         // Act
         mockMVC.perform(get("/configuration")
@@ -63,7 +63,7 @@ public class MainControllerTest
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void configurationGetRequestWhenPassedInvalidOwnerParam_ShouldThrowIllegalArgumentException() throws Throwable
+    public void configurationGet_whenPassedInvalidOwnerParam_shouldThrowIllegalArgumentException() throws Throwable
     {
         try
         {
@@ -84,7 +84,7 @@ public class MainControllerTest
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void configurationGetRequestWhenPassedInvalidKeyParam_ShouldThrowIllegalArgumentException() throws Throwable
+    public void configurationGet_whenPassedInvalidKeyParam_shouldThrowIllegalArgumentException() throws Throwable
     {
         try
         {
@@ -105,7 +105,7 @@ public class MainControllerTest
     }
 
     @Test
-    public void reconfigureGetRequest_shouldCallConfigurationServiceReconfigureMethod() throws Exception
+    public void reconfigure_shouldCallConfigurationServiceReconfigureMethod() throws Exception
     {
         // Act
         mockMVC.perform(get("/reconfigure"));
@@ -114,7 +114,7 @@ public class MainControllerTest
     }
 
     @Test
-    public void configurationGetRequestWithoutParams_shouldCallConfigurationServiceGetAllConfigurationsMethod() throws Exception
+    public void configurationGetRequest_withoutParams_shouldCallConfigurationServiceGetAllConfigurationsMethod() throws Exception
     {
         // Act
         mockMVC.perform(get("/configurations"));
@@ -123,7 +123,7 @@ public class MainControllerTest
     }
 
     @Test
-    public void configurationPostRequestWhenPassedValidRequestBody_ShouldCallConfigurationServiceSaveConfigurationMethod() throws Exception
+    public void configurationPost_whenPassedValidRequestBody_shouldCallConfigurationServiceSaveConfigurationMethod() throws Exception
     {
         // Arrange
         Configuration configuration = new Configuration("Horatio", "surname", "Adeoye", "papa", "today");
@@ -138,7 +138,7 @@ public class MainControllerTest
     }
 
     @Test()
-    public void configurationPostRequestWithoutRequestBody_ShouldNeverCallConfigurationServiceSaveConfigurationMethod() throws Exception
+    public void configurationPost_withoutRequestBody_shouldNeverCallConfigurationServiceSaveConfigurationMethod() throws Exception
     {
         // Act
         mockMVC.perform(post("/configuration")
@@ -150,7 +150,7 @@ public class MainControllerTest
     }
 
     @Test
-    public void configurationDeleteRequestWhenPassedValidRequestBody_ShouldCallConfigurationServiceDeleteConfigurationMethod() throws Exception
+    public void configurationDelete_whenPassedValidRequestBody_shouldCallConfigurationServiceDeleteConfigurationMethod() throws Exception
     {
         // Act
         mockMVC.perform(delete("/configuration")
@@ -161,7 +161,7 @@ public class MainControllerTest
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void configurationDeleteRequestWhenPassedInvalidIdParam_ShouldThrowIllegalArgumentException() throws Throwable
+    public void configurationDelete_whenPassedInvalidIdParam_shouldThrowIllegalArgumentException() throws Throwable
     {
         try
         {
@@ -181,7 +181,7 @@ public class MainControllerTest
     }
 
     @Test
-    public void configurationByOwnerGetRequestWhenPassedValidParams_ShouldCallConfigurationServiceGetConfigurationValueMethod() throws Exception
+    public void configurationByOwner_whenPassedValidParams_shouldCallConfigurationServiceGetConfigurationValueMethod() throws Exception
     {
         // Act
         mockMVC.perform(get("/configurationByOwner")
@@ -192,7 +192,7 @@ public class MainControllerTest
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void configurationByOwner_WhenPassedInvalidOwnerParam_ShouldThrowIllegalArgumentException() throws Throwable
+    public void configurationByOwner_whenPassedInvalidOwnerParam_shouldThrowIllegalArgumentException() throws Throwable
     {
         try
         {
@@ -212,7 +212,7 @@ public class MainControllerTest
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void configurationByOwner_WhenPassedNullOwnerParam_ShouldThrowIllegalArgumentException() throws Throwable
+    public void configurationByOwner_whenPassedNullOwnerParam_shouldThrowIllegalArgumentException() throws Throwable
     {
         try
         {
@@ -232,7 +232,7 @@ public class MainControllerTest
     }
 
     @Test
-    public void configurationByOwner_WhenPassedNonExistentOwnerParam_ShouldReturnEmptyList() throws Exception
+    public void configurationByOwner_whenPassedNonExistentOwnerParam_shouldReturnEmptyList() throws Exception
     {
         // Arrange
         when(configurationServiceMock.getConfigurationValues("horatio")).thenReturn(Collections.emptyList());
@@ -244,5 +244,101 @@ public class MainControllerTest
         // Assert
         verify(configurationServiceMock, times(1)).getConfigurationValues("horatio");
         assertEquals("[]", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void deleteConfigurationByOwnerAndKey_whenPassedValidOwnerAndKeyParams_shouldCallConfigurationServiceDeleteConfigurationMethod() throws Exception
+    {
+        // Act
+        mockMVC.perform(delete("/configurationByOwnerAndKey")
+                .param("owner", "horatio")
+                .param("key", "surname"))
+                .andExpect(status().isOk());
+        // Assert
+        verify(configurationServiceMock, times(1)).deleteConfiguration("horatio", "surname");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void deleteConfigurationByOwnerAndKey_whenPassedInvalidOwnerParam_shouldNotCallConfigurationServiceDeleteConfigurationMethod() throws Throwable
+    {
+        try
+        {
+            // Act
+            mockMVC.perform(delete("/configurationByOwnerAndKey")
+                    .param("owner", "")
+                    .param("key", "surname"));
+        }
+        catch(NestedServletException e)
+        {
+            // Assert
+            verify(configurationServiceMock, never()).deleteConfiguration("", "surname");
+            assertNotNull( e );
+            assertNotNull( e.getCause() );
+            assertTrue( e.getCause() instanceof IllegalArgumentException );
+            throw e.getCause();
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void deleteConfigurationByOwnerAndKey_whenPassedValidOwnerButInvalidKeyParam_shouldNotCallConfigurationServiceDeleteConfigurationMethod() throws Throwable
+    {
+        try
+        {
+            // Act
+            mockMVC.perform(delete("/configurationByOwnerAndKey")
+                    .param("owner", "horatio")
+                    .param("key", ""));
+        }
+        catch(NestedServletException e)
+        {
+            // Assert
+            verify(configurationServiceMock, never()).deleteConfiguration("horatio", "");
+            assertNotNull( e );
+            assertNotNull( e.getCause() );
+            assertTrue( e.getCause() instanceof IllegalArgumentException );
+            throw e.getCause();
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void deleteConfigurationByOwnerAndKey_whenPassedNullOwnerParam_shouldNotCallConfigurationServiceDeleteConfigurationMethod() throws Throwable
+    {
+        try
+        {
+            // Act
+            mockMVC.perform(delete("/configurationByOwnerAndKey")
+                    .param("owner", null)
+                    .param("key", "surname"));
+        }
+        catch(NestedServletException e)
+        {
+            // Assert
+            verify(configurationServiceMock, never()).deleteConfiguration(null, "surname");
+            assertNotNull( e );
+            assertNotNull( e.getCause() );
+            assertTrue( e.getCause() instanceof IllegalArgumentException );
+            throw e.getCause();
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void deleteConfigurationByOwnerAndKey_whenPassedValidOwnerButNullKeyParam_shouldNotCallConfigurationServiceDeleteConfigurationMethod() throws Throwable
+    {
+        try
+        {
+            // Act
+            mockMVC.perform(delete("/configurationByOwnerAndKey")
+                    .param("owner", "horatio")
+                    .param("key", null));
+        }
+        catch(NestedServletException e)
+        {
+            // Assert
+            verify(configurationServiceMock, never()).deleteConfiguration("horatio", null);
+            assertNotNull( e );
+            assertNotNull( e.getCause() );
+            assertTrue( e.getCause() instanceof IllegalArgumentException );
+            throw e.getCause();
+        }
     }
 }

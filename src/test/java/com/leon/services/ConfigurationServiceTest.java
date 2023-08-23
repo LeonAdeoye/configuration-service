@@ -96,26 +96,19 @@ public class ConfigurationServiceTest
         assertEquals("empty string should be returned for non-existent configuration", "", age);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void whenConfigurationDoesNotExist_deleteConfiguration_shouldNotCallRepositoryDeleteMethod() throws Exception
     {
-        try
-        {
-            // Arrange
-            List<Configuration> configs = Arrays.asList(
-                    new Configuration("Horatio", "surname", "Adeoye", "papa", "today", "1"),
-                    new Configuration("Horatio", "firstName", "Ethan", "papa", "today", "2"));
-            when(configurationRepositoryMock.findAll()).thenReturn(configs);
-            configurationService.reconfigure();
-            // Act
-            configurationService.deleteConfiguration("");
-        }
-        catch(Exception e)
-        {
-            // Assert
-            verify(configurationRepositoryMock, never()).deleteById(any());
-            throw e;
-        }
+        // Arrange
+        List<Configuration> configs = Arrays.asList(
+                new Configuration("Horatio", "surname", "Adeoye", "papa", "today", "1"),
+                new Configuration("Horatio", "firstName", "Ethan", "papa", "today", "2"));
+        when(configurationRepositoryMock.findAll()).thenReturn(configs);
+        configurationService.reconfigure();
+        // Act
+        configurationService.deleteConfiguration("3");
+        // Assert
+        verify(configurationRepositoryMock, never()).deleteById(any());
     }
 
     @Test
@@ -186,4 +179,50 @@ public class ConfigurationServiceTest
         // Assert
         assertEquals("empty list should be returned for non-existent configuration", 0, result.size());
     }
+
+    @Test
+    public void whenPassedValidOwnerAndKey_deleteConfiguration_shouldDeleteConfiguration()
+    {
+        // Arrange
+        List<Configuration> configs = Arrays.asList(
+                new Configuration("Horatio", "surname", "Adeoye", "papa", "today", "1"),
+                new Configuration("Horatio", "firstName","Ethan", "papa", "today", "2"));
+        when(configurationRepositoryMock.findAll()).thenReturn(configs);
+        configurationService.reconfigure();
+        // Act
+        configurationService.deleteConfiguration("Horatio", "surname");
+        // Assert
+        verify(configurationRepositoryMock, times(1)).deleteById("1");
+    }
+
+    @Test
+    public void whenPassedNonExistentOwnerAndKey_deleteConfiguration_shouldNotDeleteConfiguration()
+    {
+        // Arrange
+        List<Configuration> configs = Arrays.asList(
+                new Configuration("Horatio", "surname", "Adeoye", "papa", "today", "1"),
+                new Configuration("Horatio", "firstName","Ethan", "papa", "today", "2"));
+        when(configurationRepositoryMock.findAll()).thenReturn(configs);
+        configurationService.reconfigure();
+        // Act
+        configurationService.deleteConfiguration("Harper", "surname");
+        // Assert
+        verify(configurationRepositoryMock, never()).deleteById(any());
+    }
+
+    @Test
+    public void whenPassedValidOwnerAndNonExistentKey_deleteConfiguration_shouldNotDeleteConfiguration()
+    {
+        // Arrange
+        List<Configuration> configs = Arrays.asList(
+                new Configuration("Horatio", "surname", "Adeoye", "papa", "today", "1"),
+                new Configuration("Horatio", "firstName","Ethan", "papa", "today", "2"));
+        when(configurationRepositoryMock.findAll()).thenReturn(configs);
+        configurationService.reconfigure();
+        // Act
+        configurationService.deleteConfiguration("Horatio", "age");
+        // Assert
+        verify(configurationRepositoryMock, never()).deleteById(any());
+    }
+
 }

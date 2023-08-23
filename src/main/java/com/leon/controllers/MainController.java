@@ -96,4 +96,24 @@ public class MainController
         logger.info("Received request to delete configuration value with id: " + id);
         configurationService.deleteConfiguration(id);
     }
+
+    @CrossOrigin
+    @RequestMapping(value = "/configurationByOwnerAndKey", method=DELETE)
+    public void deleteConfiguration(@RequestParam String owner, @RequestParam String key)
+    {
+        if(owner == null || owner.isEmpty())
+        {
+            logger.error("The owner request param cannot be null or empty.");
+            throw new IllegalArgumentException("owner argument is invalid");
+        }
+
+        if(key == null || key.isEmpty())
+        {
+            logger.error("The key request param cannot be null or empty");
+            throw new IllegalArgumentException("key argument is invalid");
+        }
+
+        logger.info("Received request to delete configuration value with owner: " + owner + ", and key: " + key);
+        configurationService.deleteConfiguration(owner, key);
+    }
 }

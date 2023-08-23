@@ -58,18 +58,38 @@ public class ConfigurationServiceImpl implements ConfigurationService
     @Override
     public void deleteConfiguration(String id)
     {
-        if(id == null || id.isEmpty())
-            throw new IllegalArgumentException("id argument is invalid");
-
         Configuration configurationToDelete = getConfigurationValue(id);
-        logger.info("Deleting configuration: " + configurationToDelete);
-        configurationRepository.deleteById(id);
+        if(configurationToDelete != null)
+        {
+            configurationRepository.deleteById(id);
 
-        configurations.get(configurationToDelete.getOwner()).remove(configurationToDelete.getKey());
-        if(configurations.get(configurationToDelete.getOwner()).values().size() == 0)
-            configurations.remove(configurationToDelete.getOwner());
+            configurations.get(configurationToDelete.getOwner()).remove(configurationToDelete.getKey());
+            if(configurations.get(configurationToDelete.getOwner()).values().size() == 0)
+                configurations.remove(configurationToDelete.getOwner());
 
-        logger.info("Deleted configuration: " + configurationToDelete);
+            logger.info("Deleted configuration in repository and cache: " + configurationToDelete);
+        }
+        else
+            logger.error("Could not find the configuration with id: " + id + " in the cache.");
+    }
+
+    @Override
+    public void deleteConfiguration(String owner, String key)
+    {
+        if(!configurations.containsKey(owner) || !configurations.get(owner).containsKey(key))
+        {
+            logger.error("Could not find the configuration with owner: " + owner + ", and key: " + key + " in the cache.");
+            return;
+        }
+
+        Configuration configurationToDelete = configurations.get(owner).get(key);
+        configurationRepository.deleteById(configurationToDelete.getId());
+
+        configurations.get(owner).remove(key);
+        if(configurations.get(owner).values().size() == 0)
+            configurations.remove(owner);
+
+        logger.info("Deleted configuration in repository and cache: " + configurationToDelete);
     }
 
     @Override
