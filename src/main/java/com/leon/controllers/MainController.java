@@ -48,6 +48,20 @@ public class MainController
     }
 
     @CrossOrigin
+    @RequestMapping(value = "/configurationByOwner", method=GET)
+    public List<Configuration> getConfiguration(@RequestParam String owner) throws IllegalArgumentException
+    {
+        if(owner == null || owner.isEmpty())
+        {
+            logger.error("The owner request param cannot be null or empty.");
+            throw new IllegalArgumentException("owner argument is invalid");
+        }
+
+        logger.info("Received request for configuration values belonging to owner: " + owner);
+        return configurationService.getConfigurationValues(owner);
+    }
+
+    @CrossOrigin
     @RequestMapping(value = "/configurations", produces=MediaType.APPLICATION_JSON_VALUE, method=GET)
     public List<Configuration> getAllConfigurations()
     {

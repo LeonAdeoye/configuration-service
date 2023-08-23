@@ -10,4 +10,5 @@ public interface ConfigurationService
     void saveConfiguration(Configuration configuration);
     void reconfigure();
     List<Configuration> getAllConfigurations();
+    List<Configuration> getConfigurationValues(String owner);
 }

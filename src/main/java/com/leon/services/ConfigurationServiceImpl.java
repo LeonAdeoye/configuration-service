@@ -121,4 +121,16 @@ public class ConfigurationServiceImpl implements ConfigurationService
 
         return list;
     }
+
+    @Override
+    public List<Configuration> getConfigurationValues(String owner)
+    {
+        if(!configurations.containsKey(owner))
+            return Collections.emptyList();
+
+        List<Configuration> list = configurations.get(owner).values().stream().collect(Collectors.toList());
+
+        logger.info("Returning {} configurations belonging to owner {}.", list.size(), owner);
+        return list;
+    }
 }

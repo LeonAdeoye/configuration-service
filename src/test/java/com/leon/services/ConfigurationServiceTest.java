@@ -132,4 +132,58 @@ public class ConfigurationServiceTest
         // Assert
         verify(configurationRepositoryMock, times(1)).deleteById(any());
     }
+
+    // test getConfigurationValues
+    @Test
+    public void whenConfigurationExists_getConfigurationValues_shouldReturnValidSizes()
+    {
+        // Arrange
+        List<Configuration> configs = Arrays.asList(
+                new Configuration("Horatio", "surname", "Adeoye", "papa", "today"),
+                new Configuration("Horatio", "firstName", "Ethan", "papa", "today"));
+        when(configurationRepositoryMock.findAll()).thenReturn(configs);
+        configurationService.reconfigure();
+        // Act
+        List<Configuration> result = configurationService.getConfigurationValues("Horatio");
+        // Assert
+        assertEquals("list sizes should match", configs.size(), result.size());
+    }
+
+    @Test
+    public void whenConfigurationExists_getConfigurationValues_shouldReturnValidValue()
+    {
+        // Arrange
+        List<Configuration> configs = Arrays.asList(
+                new Configuration("Horatio", "surname", "Adeoye", "papa", "today"),
+                new Configuration("Horatio", "firstName", "Ethan", "papa", "today"));
+        when(configurationRepositoryMock.findAll()).thenReturn(configs);
+        configurationService.reconfigure();
+        // Act
+        List<Configuration> result = configurationService.getConfigurationValues("Horatio");
+        // Assert
+        if(result.get(0).getKey().equals("surname"))
+            assertEquals("surname config should be returned", "Adeoye", result.get(0).getValue());
+        else
+            assertEquals("first name config should be returned", "Ethan", result.get(0).getValue());
+
+        if(result.get(1).getKey().equals("surname"))
+            assertEquals("surname config should be returned", "Adeoye", result.get(1).getValue());
+        else
+            assertEquals("first name config should be returned", "Ethan", result.get(1).getValue());
+    }
+
+    @Test
+    public void whenConfigurationNotExists_getConfigurationValues_shouldReturnEmptyList()
+    {
+        // Arrange
+        List<Configuration> configs = Arrays.asList(
+                new Configuration("Horatio", "surname", "Adeoye", "papa", "today"),
+                new Configuration("Horatio", "firstName", "Ethan", "papa", "today"));
+        when(configurationRepositoryMock.findAll()).thenReturn(configs);
+        configurationService.reconfigure();
+        // Act
+        List<Configuration> result = configurationService.getConfigurationValues("Harper");
+        // Assert
+        assertEquals("empty list should be returned for non-existent configuration", 0, result.size());
+    }
 }
