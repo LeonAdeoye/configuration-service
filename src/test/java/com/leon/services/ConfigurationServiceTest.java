@@ -41,6 +41,18 @@ public class ConfigurationServiceTest
     }
 
     @Test
+    public void whenPassedValidConfiguration_saveConfiguration_shouldReturnValidId()
+    {
+        // Arrange
+        Configuration configuration = new Configuration("Horatio", "surname", "Adeoye","papa", "today", "test_id");
+        when(configurationRepositoryMock.save(configuration)).thenReturn(configuration);
+        // Act
+        String id = configurationService.saveConfiguration(configuration);
+        // Assert
+        assertEquals("id should be returned", configuration.getId(), id);
+    }
+
+    @Test
     public void whenPassedValidConfiguration_reconfigure_shouldCallFindAllMethodInRepositoryMock()
     {
         // Act
