@@ -71,7 +71,7 @@ public class MainController
 
     @CrossOrigin
     @RequestMapping(value = "/configuration", method={PUT, POST}, consumes=MediaType.APPLICATION_JSON_VALUE)
-    public void saveConfiguration(@RequestBody Configuration configuration)
+    public String saveConfiguration(@RequestBody Configuration configuration)
     {
         if(configuration == null)
         {
@@ -80,7 +80,7 @@ public class MainController
         }
 
         logger.info("Received request to save a configuration: " + configuration);
-        configurationService.saveConfiguration(configuration);
+        return configurationService.saveConfiguration(configuration);
     }
 
     @CrossOrigin

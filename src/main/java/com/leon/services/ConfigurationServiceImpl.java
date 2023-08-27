@@ -93,12 +93,12 @@ public class ConfigurationServiceImpl implements ConfigurationService
     }
 
     @Override
-    public void saveConfiguration(Configuration configuration)
+    public String saveConfiguration(Configuration configuration)
     {
         configurationRepository.save(configuration);
         addToCache(configuration);
-
         logger.info("Saved configuration: " + configuration);
+        return configuration.getId();
     }
 
     private void addToCache(Configuration configuration)
