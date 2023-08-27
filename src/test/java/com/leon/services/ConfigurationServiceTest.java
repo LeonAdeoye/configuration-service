@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 
@@ -44,12 +45,12 @@ public class ConfigurationServiceTest
     public void whenPassedValidConfiguration_saveConfiguration_shouldReturnValidId()
     {
         // Arrange
-        Configuration configuration = new Configuration("Horatio", "surname", "Adeoye","papa", "today", "test_id");
-        when(configurationRepositoryMock.save(configuration)).thenReturn(configuration);
+        Configuration newConfiguration = new Configuration("Horatio", "surname", "Adeoye","papa", "today", "test_id");
+        when(configurationRepositoryMock.save(newConfiguration)).thenReturn(newConfiguration);
         // Act
-        String id = configurationService.saveConfiguration(configuration);
+        Configuration configuration = configurationService.saveConfiguration(newConfiguration);
         // Assert
-        assertEquals("id should be returned", configuration.getId(), id);
+        assertTrue("id should be returned", configuration.equals(newConfiguration));
     }
 
     @Test

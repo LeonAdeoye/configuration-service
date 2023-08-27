@@ -71,7 +71,7 @@ public class MainController
 
     @CrossOrigin
     @RequestMapping(value = "/configuration", method={PUT, POST}, consumes=MediaType.APPLICATION_JSON_VALUE)
-    public String saveConfiguration(@RequestBody Configuration configuration)
+    public Configuration saveConfiguration(@RequestBody Configuration configuration)
     {
         if(configuration == null)
         {
