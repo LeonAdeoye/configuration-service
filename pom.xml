@@ -41,7 +41,7 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-consul-discovery</artifactId>
-<!--            This 2.0.0 version is compatible with the spring boot version I am using.-->
+<!-- This 2.0.0 version is compatible with the spring boot version I am using.-->
             <version>2.0.0.RELEASE</version>
         </dependency>
     </dependencies>
