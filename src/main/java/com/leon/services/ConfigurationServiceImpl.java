@@ -108,8 +108,8 @@ public class ConfigurationServiceImpl implements ConfigurationService
         else
         {
             Map<String, Configuration> ownerMap = new HashMap<>();
-            ownerMap.put(configuration.getOwner(), configuration);
-            configurations.put(configuration.getKey(), ownerMap);
+            ownerMap.put(configuration.getKey(), configuration);
+            configurations.put(configuration.getOwner(), ownerMap);
         }
     }
 
