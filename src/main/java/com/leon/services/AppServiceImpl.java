@@ -15,8 +15,13 @@ public class AppServiceImpl implements AppService
 {
     private static final Logger logger = LoggerFactory.getLogger(AppServiceImpl.class);
     private static Map<String, App> apps;
+
     @Autowired
     AppRepository appRepository;
+
+    public AppServiceImpl()
+    {
+    }
 
     @PostConstruct
     public void initialize()
@@ -28,10 +33,11 @@ public class AppServiceImpl implements AppService
     public List<App> getAllApps()
     {
         List<App> list = apps.values().stream().collect(Collectors.toList());
+
         logger.info("Returning " + list.size() + " apps.");
+
         return list;
     }
-
 
     @Override
     public App saveApp(App app)
@@ -41,7 +47,6 @@ public class AppServiceImpl implements AppService
         logger.info("Saved app: " + app);
         return app;
     }
-
 
     @Override
     public void refreshApps()
@@ -58,7 +63,6 @@ public class AppServiceImpl implements AppService
     {
         List<App> loadedApps = appRepository.findAll();
         apps = loadedApps.stream().collect(Collectors.toMap(App::getId, app -> app));
-        logger.info("Retrieved " + loadedApps.size() + " apps from the persistence store:\n"
-                + loadedApps.stream().map(app -> app + "\n").collect(Collectors.joining()));
+        logger.info("Retrieved " + loadedApps.size() + " apps from the persistence store:\n" + loadedApps.stream().map(app -> app + "\n").collect(Collectors.joining()));
     }
 }

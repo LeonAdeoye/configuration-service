@@ -40,7 +40,7 @@ public class AppsController
     }
 
     @CrossOrigin
-    @RequestMapping("/refreshApps")
+    @RequestMapping("/apps/refresh")
     public void refreshApps()
     {
         logger.info("Received request to refresh apps.");
